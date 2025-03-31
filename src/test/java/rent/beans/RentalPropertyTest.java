@@ -1,11 +1,15 @@
 package rent.beans;
 
 import fr.esgi.rent.beans.RentalProperty;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.stream.Stream;
 
 import static fr.esgi.rent.beans.EnergyClassification.D;
@@ -39,14 +43,14 @@ class RentalPropertyTest {
 
     @ParameterizedTest
     @MethodSource("provideCsvValuesAndExpectedRentalProperty")
-    void shouldCreate(String[] csvValues, RentalProperty expectedRentalProperty) {
+    void shouldCreate(String[] csvValues, RentalProperty expectedRentalProperty) throws IOException {
         CSVRecord csvRecord = mock(CSVRecord.class);
 
         for (int i = 0; i < HEADERS.length; i++) {
             when(csvRecord.get(HEADERS[i])).thenReturn(csvValues[i]);
         }
 
-        RentalProperty rentalProperty = RentalProperty.create(csvRecord, HEADERS, (csvField) -> true);
+        RentalProperty rentalProperty = RentalProperty.create(csvRecord, HEADERS, csvField -> true);
 
         assertThat(rentalProperty).isEqualTo(expectedRentalProperty);
     }
